@@ -17,24 +17,7 @@
 
 package net.devh.boot.grpc.client.nameresolver;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-import static java.util.Objects.requireNonNull;
-
-import java.net.InetSocketAddress;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicReference;
-
-import javax.annotation.concurrent.GuardedBy;
-
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.util.CollectionUtils;
-
 import com.google.common.collect.Lists;
-
 import io.grpc.Attributes;
 import io.grpc.EquivalentAddressGroup;
 import io.grpc.NameResolver;
@@ -42,7 +25,19 @@ import io.grpc.Status;
 import io.grpc.SynchronizationContext;
 import io.grpc.internal.SharedResourceHolder;
 import lombok.extern.slf4j.Slf4j;
-import net.devh.boot.grpc.common.util.GrpcUtils;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.concurrent.GuardedBy;
+import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 /**
  * The DiscoveryClientNameResolver resolves the service hosts and their associated gRPC port using the channel's name
@@ -217,20 +212,7 @@ public class DiscoveryClientNameResolver extends NameResolver {
          * @throws IllegalArgumentException If the specified port definition couldn't be parsed.
          */
         private int getGRPCPort(final ServiceInstance instance) {
-            final Map<String, String> metadata = instance.getMetadata();
-            if (metadata == null) {
-                return instance.getPort();
-            }
-            final String portString = metadata.get(GrpcUtils.CLOUD_DISCOVERY_METADATA_PORT);
-            if (portString == null) {
-                return instance.getPort();
-            }
-            try {
-                return Integer.parseInt(portString);
-            } catch (final NumberFormatException e) {
-                // TODO: How to handle this case?
-                throw new IllegalArgumentException("Failed to parse gRPC port information from: " + instance, e);
-            }
+            return instance.getPort();
         }
 
         /**

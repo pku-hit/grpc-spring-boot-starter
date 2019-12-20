@@ -17,13 +17,19 @@
 
 package net.devh.boot.grpc.server.serverfactory;
 
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.springframework.context.SmartLifecycle;
-
+import com.ecwid.consul.v1.agent.model.NewService;
 import io.grpc.Server;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
+import org.springframework.cloud.consul.serviceregistry.ConsulAutoRegistration;
+import org.springframework.cloud.consul.serviceregistry.ConsulRegistration;
+import org.springframework.cloud.consul.serviceregistry.ConsulServiceRegistry;
+import org.springframework.context.SmartLifecycle;
+import org.springframework.context.support.AbstractApplicationContext;
+
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Lifecycle bean that automatically starts and stops the grpc server.
@@ -38,6 +44,11 @@ public class GrpcServerLifecycle implements SmartLifecycle {
     private volatile Server server;
     private volatile int phase = Integer.MAX_VALUE;
     private final GrpcServerFactory factory;
+    @Autowired
+    private ConsulServiceRegistry consulServiceRegistry;
+
+    @Autowired
+    private AbstractApplicationContext applicationContext;
 
     public GrpcServerLifecycle(final GrpcServerFactory factory) {
         this.factory = factory;
@@ -105,6 +116,21 @@ public class GrpcServerLifecycle implements SmartLifecycle {
             };
             awaitThread.setDaemon(false);
             awaitThread.start();
+
+            ConsulDiscoveryProperties properties = applicationContext.getBean(ConsulDiscoveryProperties.class);
+
+            NewService grpcService = new NewService();
+            grpcService.setPort(this.server.getPort());
+            if (!properties.isPreferAgentAddress()) {
+                grpcService.setAddress(properties.getHostname());
+            }
+
+            String appName = "grpc-" + ConsulAutoRegistration.getAppName(properties, applicationContext.getEnvironment());
+            grpcService.setName(ConsulAutoRegistration.normalizeForDns(appName));
+            grpcService.setId("grpc-" + ConsulAutoRegistration.getInstanceId(properties, applicationContext));
+            ConsulRegistration consulRegistration = new ConsulRegistration(grpcService, properties);
+            // Registry grpc
+            this.consulServiceRegistry.register(consulRegistration);
         }
     }
 

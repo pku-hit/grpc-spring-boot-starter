@@ -2,7 +2,8 @@ apply plugin: 'org.springframework.boot'
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
-    compile("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    //compile("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    compile('org.springframework.cloud:spring-cloud-starter-consul-discovery')
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.cloud:spring-cloud-starter-zipkin')
     compile("io.zipkin.brave:brave-instrumentation-grpc:${braveInstrumentationGrpc}")

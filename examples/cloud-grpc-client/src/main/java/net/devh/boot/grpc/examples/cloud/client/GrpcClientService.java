@@ -32,7 +32,7 @@ import net.devh.boot.grpc.examples.lib.SimpleGrpc.SimpleBlockingStub;
 @Service
 public class GrpcClientService {
 
-    @GrpcClient("cloud-grpc-server")
+    @GrpcClient("grpc-my-cloud-grpc-server")
     private SimpleBlockingStub simpleStub;
 
     public String sendMessage(final String name) {
