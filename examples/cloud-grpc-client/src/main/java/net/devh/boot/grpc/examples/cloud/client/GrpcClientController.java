@@ -34,7 +34,9 @@ public class GrpcClientController {
 
     @RequestMapping("/")
     public String printMessage(@RequestParam(defaultValue = "Michael") String name) {
-        return grpcClientService.sendMessage(name);
+        String msg = grpcClientService.sendMessage(name);
+        System.out.println(msg);
+        return msg;
     }
 
 }

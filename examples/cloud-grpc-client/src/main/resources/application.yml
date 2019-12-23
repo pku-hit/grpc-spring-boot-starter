@@ -16,7 +16,7 @@ spring:
       enabled: false
 grpc:
   client:
-    cloud-grpc-server:
+    grpc-my-cloud-grpc-server:
       enableKeepAlive: true
       keepAliveWithoutCalls: true
-      negotiationType: plaintext
+      negotiationType: PLAINTEXT
