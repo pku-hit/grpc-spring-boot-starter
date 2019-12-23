@@ -8,6 +8,8 @@ spring:
         enabled: true
         prefer-ip-address: true
         register: true
+        healthCheckInterval: 15s
+        health-check-url: http://${spring.cloud.client.ip-address}:${server.port}/actuator/health
       host: localhost
       port: 8500
   zipkin:

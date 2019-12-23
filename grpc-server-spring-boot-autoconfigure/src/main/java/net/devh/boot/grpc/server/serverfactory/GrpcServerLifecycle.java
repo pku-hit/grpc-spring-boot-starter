@@ -50,6 +50,8 @@ public class GrpcServerLifecycle implements SmartLifecycle {
     @Autowired
     private AbstractApplicationContext applicationContext;
 
+    private ConsulRegistration consulRegistration;
+
     public GrpcServerLifecycle(final GrpcServerFactory factory) {
         this.factory = factory;
     }
@@ -128,7 +130,7 @@ public class GrpcServerLifecycle implements SmartLifecycle {
             String appName = "grpc-" + ConsulAutoRegistration.getAppName(properties, applicationContext.getEnvironment());
             grpcService.setName(ConsulAutoRegistration.normalizeForDns(appName));
             grpcService.setId("grpc-" + ConsulAutoRegistration.getInstanceId(properties, applicationContext));
-            ConsulRegistration consulRegistration = new ConsulRegistration(grpcService, properties);
+            consulRegistration = new ConsulRegistration(grpcService, properties);
             // Registry grpc
             this.consulServiceRegistry.register(consulRegistration);
         }
@@ -146,6 +148,9 @@ public class GrpcServerLifecycle implements SmartLifecycle {
             this.server = null;
             log.info("gRPC server shutdown.");
         }
+        consulServiceRegistry.deregister(consulRegistration);
+        consulServiceRegistry.close();
+        consulRegistration = null;
     }
 
 }
