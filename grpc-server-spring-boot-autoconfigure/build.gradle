@@ -1,6 +1,6 @@
 apply from: '../deploy.gradle'
 
-group = "net.devh"
+group = "com.founder.core"
 version = "${projectVersion}"
 
 compileJava.dependsOn(processResources)
