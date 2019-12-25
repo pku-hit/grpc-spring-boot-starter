@@ -16,7 +16,7 @@ spring:
       enabled: false
 grpc:
   client:
-    grpc-my-cloud-grpc-server:
+    grpc-fn-simple-dynamic-form:
       enableKeepAlive: true
       keepAliveWithoutCalls: true
       negotiationType: PLAINTEXT

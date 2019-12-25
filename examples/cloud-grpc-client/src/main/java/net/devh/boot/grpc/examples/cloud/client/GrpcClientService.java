@@ -17,31 +17,23 @@
 
 package net.devh.boot.grpc.examples.cloud.client;
 
+import com.founder.core.libgrpc.MsgResponse;
+import com.founder.ihc.simple.dynamic.form.rpc.grpc.SimpleDynamicFormServiceGrpc;
+import com.google.protobuf.Empty;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
-import io.grpc.StatusRuntimeException;
-import net.devh.boot.grpc.client.inject.GrpcClient;
-import net.devh.boot.grpc.examples.lib.HelloReply;
-import net.devh.boot.grpc.examples.lib.HelloRequest;
-import net.devh.boot.grpc.examples.lib.SimpleGrpc.SimpleBlockingStub;
+import java.util.List;
 
-/**
- * @author Michael (yidongnan@gmail.com)
- * @since 2016/11/8
- */
 @Service
 public class GrpcClientService {
 
-    @GrpcClient("grpc-my-cloud-grpc-server")
-    private SimpleBlockingStub simpleStub;
+    @GrpcClient("grpc-fn-simple-dynamic-form")
+    private SimpleDynamicFormServiceGrpc.SimpleDynamicFormServiceBlockingStub grpcSvc;
 
-    public String sendMessage(final String name) {
-        try {
-            final HelloReply response = this.simpleStub.sayHello(HelloRequest.newBuilder().setName(name).build());
-            return response.getMessage();
-        } catch (final StatusRuntimeException e) {
-            return "FAILED with " + e.getStatus().getCode();
-        }
+    public List sendMessage() {
+        MsgResponse.ListResponse response = this.grpcSvc.elementTree(Empty.newBuilder().build());
+        return response.getResultList();
     }
 
 }

@@ -17,10 +17,15 @@
 
 package net.devh.boot.grpc.examples.cloud.client;
 
+import com.founder.core.libgrpc.MsgResponse;
+import com.founder.core.response.ListResponse;
+import io.grpc.internal.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author Michael (yidongnan@gmail.com)
@@ -33,10 +38,9 @@ public class GrpcClientController {
     private GrpcClientService grpcClientService;
 
     @RequestMapping("/")
-    public String printMessage(@RequestParam(defaultValue = "Michael") String name) {
-        String msg = grpcClientService.sendMessage(name);
-        System.out.println(msg);
-        return msg;
+    public ListResponse printMessage(@RequestParam(defaultValue = "Michael") String name) {
+        List list = grpcClientService.sendMessage();
+        return ListResponse.genSuccess(list);
     }
 
 }

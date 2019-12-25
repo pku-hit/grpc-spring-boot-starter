@@ -1,14 +1,26 @@
 apply plugin: 'org.springframework.boot'
 
+allprojects {
+    repositories {
+        mavenLocal()
+        maven {
+            url "https://repo.rdc.aliyun.com/repository/9320-snapshot-iV78kb/"
+        }
+        mavenCentral()
+    }
+}
+
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     // compile("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     compile('org.springframework.cloud:spring-cloud-starter-consul-discovery')
     compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('com.founder.core:lib-response:0.0.1-SNAPSHOT')
+    compile('com.founder.ihc:fn-simple-dynamic-form-lib:0.0.2-SNAPSHOT')
     // compile('org.springframework.cloud:spring-cloud-starter-zipkin')
     // compile("io.zipkin.brave:brave-instrumentation-grpc:${braveInstrumentationGrpc}")
-    compile project(':grpc-client-spring-boot-starter') // replace to compile("net.devh:grpc-client-spring-boot-starter:${springBootGrpcVersion}")
-    compile project(':examples:grpc-lib')
+    compile project(':grpc-client-spring-boot-starter')
+    // replace to compile("net.devh:grpc-client-spring-boot-starter:${springBootGrpcVersion}")
 }
 
 buildscript {
